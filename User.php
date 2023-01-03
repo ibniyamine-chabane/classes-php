@@ -18,6 +18,7 @@ class User
     //CONSTRUCTEUR
 
     public function __construct() {
+        session_start();
         $this->database = mysqli_connect("localhost", "root", "", "classes", 3307);
         $request = $this->database->query('SELECT * FROM utilisateurs');
         $data = $this->data;
@@ -86,20 +87,21 @@ class User
     
             if ($login === $user[1] &&
             $password === $user[2]) {
-                //echo "vous etes connecter"; // test pour afficher si on est connecté 
+                echo "vous etes connecter</br>"; 
                 
-                //$_SESSION['login'] = $login;
+                $_SESSION['login'] = $login;
 
                 $logged = true;
                 break;
             } else {
-                $message = "erreur dans le mdp ou login";
+                $message = "erreur dans le mdp ou login</br>";
             }
         }
     }
 
     public function disconnect() {
-
+        session_destroy();
+        echo "vous êtes déconnecter";
     }
 
     public function delete() {
@@ -137,4 +139,6 @@ class User
 }
 
 $utilisateur = new User;
-$utilisateur->register('elmachotoro', 'toto', 'toto@titi.com', 'tonio', 'santana');
+$utilisateur->register('kuroro', 'toto', 'toto@titi.com', 'tonio', 'santana');
+$utilisateur->connect('kuroro', 'toto');
+$utilisateur->disconnect();
