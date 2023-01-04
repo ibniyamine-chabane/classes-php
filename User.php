@@ -101,18 +101,28 @@ class User
         session_destroy();
     }
 
-    public function update() {
+    public function update($login, $password, $email, $firstname, $lastname) {
 
+        $this->login =      $login;
+        $this->email =      $email;
+        $this->password =   $password;
+        $this->firstname =  $firstname;
+        $this->lastname =   $lastname;
+        $logged_user = $_SESSION['login'];
+
+        $sql_update = "UPDATE `utilisateurs` SET `login` = '$login' , `password` = '$password' , `email` = '$email' , 
+        `firstname` = '$firstname' , `lastname` = '$lastname' WHERE `utilisateurs`.`login` = '$logged_user'";
+        $this->database->query($sql_update);
     }
 
-    /*public function isConnected() {
+    public function isConnected() {
          
         if (isset($_SESSION['login'])) {
             return true;
         } else {
             return false;
         }
-    }*/
+    }
 
     public function getAllInfos() {
         $this->login = $_SESSION['login'];
@@ -121,32 +131,10 @@ class User
         $this->data = $request->fetch_ASSOC();
         var_dump($this->data);
         return $this->data;
-        /*
-        echo "<table border style='text-align: center;'>
-                <thead>
-                    <th>id</th>
-                    <th>login</th>
-                    <th>password</th>
-                    <th>email</th>
-                    <th>firstname</th>
-                    <th>lastname</th>
-                </thead>";
-        
-        foreach ($this->data as $user) {
-            echo '<tr>
-                    <td>'.$user[0].'</td>
-                    <td>'.$user[1].'</td>
-                    <td>'.$user[2].'</td>
-                    <td>'.$user[3].'</td>
-                    <td>'.$user[4].'</td>
-                    <td>'.$user[5].'</td>
-                  </tr>';
-        }
-        echo "</table>";*/
         
     }
 
-    /*public function getLogin() {
+    public function getLogin() {
         $this->login = $_SESSION['login'];
         $sql = "SELECT `login` FROM `utilisateurs` WHERE `login` = '$this->login'";
         $request = $this->database->query($sql);
@@ -155,9 +143,9 @@ class User
         return $this->login;
         
     
-    }*/
+    }
 
-    /*public function getEmail() {
+    public function getEmail() {
 
         $this->login = $_SESSION['login'];
         $sql = "SELECT `email` FROM `utilisateurs` WHERE `login` = '$this->login'";
@@ -165,9 +153,9 @@ class User
         $this->data = $request->fetch_ASSOC();
         $this->email = $this->data['email'];
         return $this->email;
-    }*/
+    }
 
-    /*public function getFirstname() {
+    public function getFirstname() {
 
         $this->login = $_SESSION['login'];
         $sql = "SELECT `firstname` FROM `utilisateurs` WHERE `login` = '$this->login'";
@@ -175,9 +163,9 @@ class User
         $this->data = $request->fetch_ASSOC();
         $this->firstname = $this->data['firstname'];
         return $this->firstname;
-    }*/
+    }
 
-    /*public function getLastname() {
+    public function getLastname() {
 
         $this->login = $_SESSION['login'];
         $sql = "SELECT `lastname` FROM `utilisateurs` WHERE `login` = '$this->login'";
@@ -185,15 +173,16 @@ class User
         $this->data = $request->fetch_ASSOC();
         $this->lastname = $this->data['lastname'];
         return $this->lastname;
-    }*/
+    }
 
 }
 
 $utilisateur = new User;
 //$utilisateur->register('Bigorneau', 'ada', 'leon.s.ken@RE.com', 'leon', 'kennedy');
-//$utilisateur->connect('elmachoto', 'toto');
+//$utilisateur->connect('elmachoi', 'toto');
 //$utilisateur->disconnect();
 //$utilisateur->delete();
+//$utilisateur->update('CRF','umbrella','chris.redfield@RE.com','chris','redfield');
 //$utilisateur->getAllInfos();
 //$utilisateur->getLogin();
 //$utilisateur->getEmail();
