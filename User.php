@@ -49,31 +49,19 @@ class User
                 $loginOk = true;
             }
 
-
         }
+
+            
 
         if ( $loginOk ) { 
             $sql = "INSERT INTO utilisateurs(login, password, email, firstname, lastname) VALUES ('$login','$password','$email','$firstname','$lastname')";
             $this->database->query($sql);
-            echo '<table border>
-                            <thead>
-                                <th>login</th>
-                                <th>email</th>
-                                <th>password</th>
-                                <th>firstname</th>
-                                <th>lastname</th>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>'.$login.'</td>
-                                    <td>'.$email.'</td>
-                                    <td>'.$password.'</td>
-                                    <td>'.$firstname.'</td>
-                                    <td>'.$lastname.'</td>
-                                </tr>
-                            </tbody>
-                      </table>';    
         }
+        
+        // nous retourne un tabbleau avec les info de l'utilisateur qui vient de s'inscrire.
+        /*$sqlselect = "SELECT `login`, `password`, `email`, `firstname`, `lastname` FROM utilisateurs WHERE `login` = '$login'";
+        $request = $this->database->query($sqlselect);
+        return $request->fetch_assoc();*/
 
         
     }
@@ -94,51 +82,122 @@ class User
                 $logged = true;
                 break;
             } else {
-                $message = "erreur dans le mdp ou login</br>";
+                echo "erreur dans le mdp ou login</br>";
             }
         }
     }
 
     public function disconnect() {
         session_destroy();
-        echo "vous êtes déconnecter";
+        echo "vous êtes déconnecté";
+        
     }
 
     public function delete() {
-
+        $this->login = $_SESSION['login'];
+        $sql = "DELETE FROM `utilisateurs` WHERE `login` = '$this->login'";
+        $this->database->query($sql);
+        echo "votre compte à été supprimé";
+        session_destroy();
     }
 
     public function update() {
 
     }
 
-    public function isConnected() {
+    /*public function isConnected() {
          
-    }
+        if (isset($_SESSION['login'])) {
+            return true;
+        } else {
+            return false;
+        }
+    }*/
 
     public function getAllInfos() {
-
+        $this->login = $_SESSION['login'];
+        $sql = "SELECT * FROM `utilisateurs` WHERE `login` = '$this->login'";
+        $request = $this->database->query($sql);
+        $this->data = $request->fetch_ASSOC();
+        var_dump($this->data);
+        return $this->data;
+        /*
+        echo "<table border style='text-align: center;'>
+                <thead>
+                    <th>id</th>
+                    <th>login</th>
+                    <th>password</th>
+                    <th>email</th>
+                    <th>firstname</th>
+                    <th>lastname</th>
+                </thead>";
+        
+        foreach ($this->data as $user) {
+            echo '<tr>
+                    <td>'.$user[0].'</td>
+                    <td>'.$user[1].'</td>
+                    <td>'.$user[2].'</td>
+                    <td>'.$user[3].'</td>
+                    <td>'.$user[4].'</td>
+                    <td>'.$user[5].'</td>
+                  </tr>';
+        }
+        echo "</table>";*/
+        
     }
 
-    public function getLogin() {
+    /*public function getLogin() {
+        $this->login = $_SESSION['login'];
+        $sql = "SELECT `login` FROM `utilisateurs` WHERE `login` = '$this->login'";
+        $request = $this->database->query($sql);
+        $this->data = $request->fetch_ASSOC();
+        $this->login = $this->data['login'];
+        return $this->login;
+        
+    
+    }*/
 
-    }
+    /*public function getEmail() {
 
-    public function getEmail() {
+        $this->login = $_SESSION['login'];
+        $sql = "SELECT `email` FROM `utilisateurs` WHERE `login` = '$this->login'";
+        $request = $this->database->query($sql);
+        $this->data = $request->fetch_ASSOC();
+        $this->email = $this->data['email'];
+        return $this->email;
+    }*/
 
-    }
+    /*public function getFirstname() {
 
-    public function getFirstname() {
+        $this->login = $_SESSION['login'];
+        $sql = "SELECT `firstname` FROM `utilisateurs` WHERE `login` = '$this->login'";
+        $request = $this->database->query($sql);
+        $this->data = $request->fetch_ASSOC();
+        $this->firstname = $this->data['firstname'];
+        return $this->firstname;
+    }*/
 
-    }
+    /*public function getLastname() {
 
-    public function getLastname() {
-
-    }
+        $this->login = $_SESSION['login'];
+        $sql = "SELECT `lastname` FROM `utilisateurs` WHERE `login` = '$this->login'";
+        $request = $this->database->query($sql);
+        $this->data = $request->fetch_ASSOC();
+        $this->lastname = $this->data['lastname'];
+        return $this->lastname;
+    }*/
 
 }
 
 $utilisateur = new User;
-$utilisateur->register('kuroro', 'toto', 'toto@titi.com', 'tonio', 'santana');
-$utilisateur->connect('kuroro', 'toto');
-$utilisateur->disconnect();
+//$utilisateur->register('Bigorneau', 'ada', 'leon.s.ken@RE.com', 'leon', 'kennedy');
+//$utilisateur->connect('elmachoto', 'toto');
+//$utilisateur->disconnect();
+//$utilisateur->delete();
+//$utilisateur->getAllInfos();
+//$utilisateur->getLogin();
+//$utilisateur->getEmail();
+//$utilisateur->getFirstname();
+//$utilisateur->getLastname();
+//$utilisateur->isConnected();
+
