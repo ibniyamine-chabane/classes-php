@@ -8,7 +8,6 @@ class Userpdo
     private $_id;
     public  $login;
     public  $email;
-    //public $password;
     public  $firstname;
     public  $lastname;
     public $database;
@@ -125,16 +124,25 @@ class Userpdo
 
     public function update($login, $password, $email, $firstname, $lastname) {
 
+        if (!empty($_SESSION['login'])) {
         $this->login =      $login;
         $this->email =      $email;
-        /*$this->password =*/   $password;
+        $password;
         $this->firstname =  $firstname;
         $this->lastname =   $lastname;
         $logged_user = $_SESSION['login'];
 
-        /*$sql_update = "UPDATE `utilisateurs` SET `login` = '$login' , `password` = '$password' , `email` = '$email' , 
-        `firstname` = '$firstname' , `lastname` = '$lastname' WHERE `utilisateurs`.`login` = '$logged_user'";*/
-        $this->database->query($sql_update);
+        $request = $this->database->prepare("UPDATE `utilisateurs` SET `login` = (?) , `password` = (?) , `email` = (?) , 
+        `firstname` = (?) , `lastname` = (?) WHERE `utilisateurs`.`login` = (?)");
+
+        $request->execute(array($login, $password, $email, $firstname, $lastname, $logged_user));
+        $_SESSION['login'] = $this->login;
+        
+        } else {
+            echo "veuillez vous connecter";
+        }
+
+
     }
 
     public function isConnected() {
@@ -201,14 +209,14 @@ class Userpdo
 
 $utilisateur = new Userpdo;
 //$utilisateur->register('wry', 'muda', 'dio.brando@mudaluda.com', 'Dio', 'Brando');
-//$utilisateur->connect('Bigorneau', 'ada');
+//$utilisateur->connect('kurorolu', 'prolo');
 //$utilisateur->disconnect();
-$utilisateur->delete();
-//$utilisateur->update('CRF','umbrella','chris.redfield@RE.com','chris','redfield');
+//$utilisateur->delete();
+//$utilisateur->update('kuro-daibo','potato','spider@hunter.com','kuroro','lucifer');
 //$utilisateur->getAllInfos()['password'];
 //$utilisateur->getLogin();
 //$utilisateur->getEmail();
 //$utilisateur->getFirstname();
 //$utilisateur->getLastname();
 //$utilisateur->isConnected();
-
+//echo $_SESSION['login'];
