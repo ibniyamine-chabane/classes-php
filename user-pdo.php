@@ -137,7 +137,7 @@ class Userpdo
 
         $request->execute(array($login, $password, $email, $firstname, $lastname, $logged_user));
         $_SESSION['login'] = $this->login;
-        
+
         } else {
             echo "veuillez vous connecter";
         }
@@ -157,8 +157,9 @@ class Userpdo
     public function getAllInfos() {
         $this->login = $_SESSION['login'];
         $sql = "SELECT * FROM `utilisateurs` WHERE `login` = '$this->login'";
-        $request = $this->database->query($sql);
-        $this->data = $request->fetch_ASSOC();
+        $request = $this->database->prepare("SELECT * FROM `utilisateurs` WHERE `login` = (?)");
+        $request->execute(array($this->login));
+        $this->data = $request->fetch();
         var_dump($this->data);
         return $this->data;
         
@@ -213,7 +214,7 @@ $utilisateur = new Userpdo;
 //$utilisateur->disconnect();
 //$utilisateur->delete();
 //$utilisateur->update('kuro-daibo','potato','spider@hunter.com','kuroro','lucifer');
-//$utilisateur->getAllInfos()['password'];
+echo $utilisateur->getAllInfos()['login'];
 //$utilisateur->getLogin();
 //$utilisateur->getEmail();
 //$utilisateur->getFirstname();
