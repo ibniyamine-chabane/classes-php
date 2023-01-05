@@ -188,9 +188,9 @@ class Userpdo
     public function getFirstname() {
 
         $this->login = $_SESSION['login'];
-        $sql = "SELECT `firstname` FROM `utilisateurs` WHERE `login` = '$this->login'";
-        $request = $this->database->query($sql);
-        $this->data = $request->fetch_ASSOC();
+        $request = $this->database->prepare("SELECT `firstname` FROM `utilisateurs` WHERE `login` = (?)");
+        $request->execute(array($this->login));
+        $this->data = $request->fetch();
         $this->firstname = $this->data['firstname'];
         return $this->firstname;
     }
@@ -199,8 +199,9 @@ class Userpdo
 
         $this->login = $_SESSION['login'];
         $sql = "SELECT `lastname` FROM `utilisateurs` WHERE `login` = '$this->login'";
-        $request = $this->database->query($sql);
-        $this->data = $request->fetch_ASSOC();
+        $request = $this->database->prepare("SELECT `lastname` FROM `utilisateurs` WHERE `login` = (?)");
+        $request->execute(array($this->login));
+        $this->data = $request->fetch();
         $this->lastname = $this->data['lastname'];
         return $this->lastname;
     }
