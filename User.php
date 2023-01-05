@@ -22,7 +22,7 @@ class User
         $this->database = mysqli_connect("localhost", "root", "", "classes", 3307);
         $request = $this->database->query('SELECT * FROM utilisateurs');
         $data = $this->data;
-        $this->data = $request->fetch_all();
+        $this->data = $request->fetch_all(MYSQLI_BOTH);
         var_dump($this->data);
     }
     
@@ -30,7 +30,7 @@ class User
     public function register($login, $password, $email, $firstname, $lastname) {
         $this->login =      $login;
         $this->email =      $email;
-        $this->password =   $password;
+        $password;
         $this->firstname =  $firstname;
         $this->lastname =   $lastname;
 
@@ -69,21 +69,28 @@ class User
     public function connect($login, $password) {
 
         $this->login = $login;
-        $this->password = $password;
-
+        $password;
+        $logged = false;
         foreach ($this->data as $user) { //je lis le contenu de la table $con de la BDD
     
             if ($login === $user[1] &&
             $password === $user[2]) {
-                echo "vous etes connecter</br>"; 
+                //echo "vous etes connecter</br>"; 
                 
                 $_SESSION['login'] = $login;
 
                 $logged = true;
                 break;
             } else {
-                echo "erreur dans le mdp ou login</br>";
+                //echo "erreur dans le mdp ou login</br>";
+                $logged = false;
             }
+        }
+
+        if($logged) {
+            echo "vous etes connecté";
+        } else {
+            echo "erreur dans le mdp ou login</br>";
         }
     }
 
@@ -179,14 +186,14 @@ class User
 
 $utilisateur = new User;
 //$utilisateur->register('Bigorneau', 'ada', 'leon.s.ken@RE.com', 'leon', 'kennedy');
-//$utilisateur->connect('elmachoi', 'toto');
+//$utilisateur->connect('CRF', 'umbrella');
 //$utilisateur->disconnect();
 //$utilisateur->delete();
 //$utilisateur->update('CRF','umbrella','chris.redfield@RE.com','chris','redfield');
-//$utilisateur->getAllInfos();
+//$utilisateur->getAllInfos()['password'];
 //$utilisateur->getLogin();
 //$utilisateur->getEmail();
 //$utilisateur->getFirstname();
-//$utilisateur->getLastname();
+//echo $utilisateur->getLastname();
 //$utilisateur->isConnected();
 
