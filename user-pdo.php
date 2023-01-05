@@ -27,7 +27,8 @@ class Userpdo
         }
 
          /*mysqli_connect("localhost", "root", "", "classes", 3307);*/
-        $request = $this->database->query('SELECT * FROM utilisateurs');
+        $request = $this->database->prepare('SELECT * FROM utilisateurs');
+        $request->execute(array());
         $data = $this->data;
         $this->data = $request->fetchAll();
         var_dump($this->data);
@@ -109,11 +110,17 @@ class Userpdo
     }
 
     public function delete() {
+
+        if (!empty($_SESSION['login'])) {
+
         $this->login = $_SESSION['login'];
-        $sql = "DELETE FROM `utilisateurs` WHERE `login` = '$this->login'";
-        $this->database->query($sql);
+        $request = $this->database->prepare("DELETE FROM `utilisateurs` WHERE `login` = (?)");
+        $request->execute(array($this->login));
         echo "votre compte à été supprimé";
         session_destroy();
+
+        }
+    
     }
 
     public function update($login, $password, $email, $firstname, $lastname) {
@@ -194,9 +201,9 @@ class Userpdo
 
 $utilisateur = new Userpdo;
 //$utilisateur->register('wry', 'muda', 'dio.brando@mudaluda.com', 'Dio', 'Brando');
-//$utilisateur->connect('CRF', 'umbrella');
+//$utilisateur->connect('Bigorneau', 'ada');
 //$utilisateur->disconnect();
-//$utilisateur->delete();
+$utilisateur->delete();
 //$utilisateur->update('CRF','umbrella','chris.redfield@RE.com','chris','redfield');
 //$utilisateur->getAllInfos()['password'];
 //$utilisateur->getLogin();
