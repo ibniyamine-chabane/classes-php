@@ -166,7 +166,6 @@ class Userpdo
 
     public function getLogin() {
         $this->login = $_SESSION['login'];
-        $sql = "SELECT `login` FROM `utilisateurs` WHERE `login` = '$this->login'";
         $request = $this->database->prepare("SELECT `login` FROM `utilisateurs` WHERE `login` = (?)");
         $request->execute(array($this->login));
         $this->data = $request->fetch();
@@ -179,9 +178,9 @@ class Userpdo
     public function getEmail() {
 
         $this->login = $_SESSION['login'];
-        $sql = "SELECT `email` FROM `utilisateurs` WHERE `login` = '$this->login'";
-        $request = $this->database->query($sql);
-        $this->data = $request->fetch_ASSOC();
+        $request = $this->database->prepare("SELECT `email` FROM `utilisateurs` WHERE `login` = (?)");
+        $request->execute(array($this->login));
+        $this->data = $request->fetch();
         $this->email = $this->data['email'];
         return $this->email;
     }
@@ -214,8 +213,8 @@ $utilisateur = new Userpdo;
 //$utilisateur->disconnect();
 //$utilisateur->delete();
 //$utilisateur->update('kuro-daibo','potato','spider@hunter.com','kuroro','lucifer');
-//echo $utilisateur->getAllInfos()['login'];
-echo $utilisateur->getLogin();
+//$utilisateur->getAllInfos()['login'];
+//$utilisateur->getLogin();
 //$utilisateur->getEmail();
 //$utilisateur->getFirstname();
 //$utilisateur->getLastname();
