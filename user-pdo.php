@@ -15,7 +15,6 @@ class Userpdo
 
 
     //CONSTRUCTEUR
-
     public function __construct() {
         session_start();
 
@@ -25,31 +24,32 @@ class Userpdo
             die('Erreur : ' . $e->getMessage());
         }
 
-         /*mysqli_connect("localhost", "root", "", "classes", 3307);*/
+        
         $request = $this->database->prepare('SELECT * FROM utilisateurs');
         $request->execute(array());
         $data = $this->data;
         $this->data = $request->fetchAll();
-        var_dump($this->data);
+        echo "<h1 style='color:red;font-family:monospace;font-size:30px;text-align:center'>
+        la classe Userpdo a été instancié, message depuis le contructeur</h1>";
+        //var_dump($this->data);
     }
     
     //MÉTHODES 
     public function register($login, $password, $email, $firstname, $lastname) {
         $this->login =      $login;
         $this->email =      $email;
-        /*$this->password =*/   $password;
+        $password;
         $this->firstname =  $firstname;
         $this->lastname =   $lastname;
 
         $loginOk = false;
 
-        foreach ($this->data as $user) { 
+        foreach ( $this->data as $user ) { 
                             
             //une condition dans le cas ou le login existe déjà 
-            if ( $login == $user[1] ) { 
+            if ( $this->login == $user[1] ) { 
 
-                echo "le login est déja pris</br>";
-                
+                echo "le login est déja pris</br>";                
                 $loginOk = false;
                 break;
             } else {
@@ -58,51 +58,44 @@ class Userpdo
 
         }
 
-            
-
-        if ( $loginOk ) { 
-            //$sql = "INSERT INTO utilisateurs(login, password, email, firstname, lastname) VALUES ('$login','$password','$email','$firstname','$lastname')";
+        if ( $loginOk ) {          
             $request = $this->database->prepare("INSERT INTO utilisateurs(login, password, email, firstname, lastname) VALUES (?, ?, ?, ?, ?)");
-            $request->execute(array($login, $password, $email, $firstname, $lastname));
-            echo "utilisateur créé avec succes!";
-        }
-        
-        // nous retourne un tabbleau avec les info de l'utilisateur qui vient de s'inscrire.
-        /*$sqlselect = "SELECT `login`, `password`, `email`, `firstname`, `lastname` FROM utilisateurs WHERE `login` = '$login'";
-        $request = $this->database->query($sqlselect);
-        return $request->fetch_assoc();*/
-
+            $request->execute(array($this->login, $password, $this->email, $this->firstname, $this->lastname));
+            echo "utilisateur crée avec succès!";
+            
+        }     
         
     }
 
     public function connect($login, $password) {
 
         $this->login = $login;
-        /*$this->password =*/ $password;
+        $password;
         $logged = false;
-        foreach ($this->data as $user) { //je lis le contenu de la table $con de la BDD
-    
-            if ($login === $user[1] &&
-            $password === $user[2]) {
-                //echo "vous etes connecter</br>"; 
-                
-                $_SESSION['login'] = $login;
 
+        foreach ($this->data as $user) { //je lis le contenu de la table $con de la BDD
+
+            if ($login === $user[1] && $password === $user[2]) {                         
+                $_SESSION['login'] = $login;
                 $logged = true;
                 break;
+
             } else {
-                //echo "erreur dans le mdp ou login</br>";
                 $logged = false;
             }
+
         }
-        if($logged) {
-            echo "vous etes connecté";
+
+        if( $logged ) {
+            echo "vous êtes connecté";
         } else {
             echo "erreur dans le mdp ou login</br>";
         }
+
     }
 
     public function disconnect() {
+
         session_destroy();
         echo "vous êtes déconnecté";
         
@@ -112,11 +105,11 @@ class Userpdo
 
         if (!empty($_SESSION['login'])) {
 
-        $this->login = $_SESSION['login'];
-        $request = $this->database->prepare("DELETE FROM `utilisateurs` WHERE `login` = (?)");
-        $request->execute(array($this->login));
-        echo "votre compte à été supprimé";
-        session_destroy();
+            $this->login = $_SESSION['login'];
+            $request = $this->database->prepare("DELETE FROM `utilisateurs` WHERE `login` = (?)");
+            $request->execute(array($this->login));
+            echo "votre compte a été supprimé";
+            session_destroy();
 
         }
     
@@ -125,21 +118,22 @@ class Userpdo
     public function update($login, $password, $email, $firstname, $lastname) {
 
         if (!empty($_SESSION['login'])) {
-        $this->login =      $login;
-        $this->email =      $email;
-        $password;
-        $this->firstname =  $firstname;
-        $this->lastname =   $lastname;
-        $logged_user = $_SESSION['login'];
 
-        $request = $this->database->prepare("UPDATE `utilisateurs` SET `login` = (?) , `password` = (?) , `email` = (?) , 
-        `firstname` = (?) , `lastname` = (?) WHERE `utilisateurs`.`login` = (?)");
+            $this->login =      $login;
+            $this->email =      $email;
+            $password;
+            $this->firstname =  $firstname;
+            $this->lastname =   $lastname;
+            $logged_user = $_SESSION['login'];
 
-        $request->execute(array($login, $password, $email, $firstname, $lastname, $logged_user));
-        $_SESSION['login'] = $this->login;
+            $request = $this->database->prepare("UPDATE `utilisateurs` SET `login` = (?) , `password` = (?) , `email` = (?) , 
+            `firstname` = (?) , `lastname` = (?) WHERE `utilisateurs`.`login` = (?)");
+
+            $request->execute(array($this->login, $password, $this->email, $this->firstname, $this->lastname, $logged_user));
+            $_SESSION['login'] = $this->login;
 
         } else {
-            echo "veuillez vous connecter";
+            echo "Acces interdit";
         }
 
 
@@ -155,24 +149,24 @@ class Userpdo
     }
 
     public function getAllInfos() {
+
         $this->login = $_SESSION['login'];
         $request = $this->database->prepare("SELECT * FROM `utilisateurs` WHERE `login` = (?)");
         $request->execute(array($this->login));
         $this->data = $request->fetch();
-        var_dump($this->data);
         return $this->data;
         
     }
 
     public function getLogin() {
+
         $this->login = $_SESSION['login'];
         $request = $this->database->prepare("SELECT `login` FROM `utilisateurs` WHERE `login` = (?)");
         $request->execute(array($this->login));
         $this->data = $request->fetch();
         $this->login = $this->data['login'];
         return $this->login;
-        
-    
+            
     }
 
     public function getEmail() {
@@ -183,6 +177,7 @@ class Userpdo
         $this->data = $request->fetch();
         $this->email = $this->data['email'];
         return $this->email;
+
     }
 
     public function getFirstname() {
@@ -193,6 +188,7 @@ class Userpdo
         $this->data = $request->fetch();
         $this->firstname = $this->data['firstname'];
         return $this->firstname;
+
     }
 
     public function getLastname() {
@@ -209,11 +205,11 @@ class Userpdo
 }
 
 $utilisateur = new Userpdo;
-//$utilisateur->register('wry', 'muda', 'dio.brando@mudaluda.com', 'Dio', 'Brando');
-//$utilisateur->connect('kurorolu', 'prolo');
+//$utilisateur->register('zaft', 'system', 'gundam@rengou.com', 'Kira', 'Yamato');
+//$utilisateur->connect('zaft','system');
 //$utilisateur->disconnect();
 //$utilisateur->delete();
-//$utilisateur->update('kuro-daibo','potato','spider@hunter.com','kuroro','lucifer');
+//$utilisateur->update('rengou', 'system', 'gundam@faith.com', 'Kira', 'Yamato');
 //$utilisateur->getAllInfos()['login'];
 //$utilisateur->getLogin();
 //$utilisateur->getEmail();

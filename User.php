@@ -8,7 +8,6 @@ class User
     private $_id;
     public  $login;
     public  $email;
-    public $password;
     public  $firstname;
     public  $lastname;
     public $database;
@@ -18,76 +17,67 @@ class User
     //CONSTRUCTEUR
 
     public function __construct() {
+
         session_start();
         $this->database = mysqli_connect("localhost", "root", "", "classes", 3307);
         $request = $this->database->query('SELECT * FROM utilisateurs');
         $data = $this->data;
         $this->data = $request->fetch_all(MYSQLI_BOTH);
-        var_dump($this->data);
+        echo "<h1 style='color:red;font-family:monospace;font-size:30px;text-align:center'>
+        la classe 'User' a été instancié, message depuis le contructeur</h1>";
     }
     
     //MÉTHODES 
     public function register($login, $password, $email, $firstname, $lastname) {
+
         $this->login =      $login;
         $this->email =      $email;
         $password;
         $this->firstname =  $firstname;
         $this->lastname =   $lastname;
-
         $loginOk = false;
 
         foreach ($this->data as $user) { 
                             
             //une condition dans le cas ou le login existe déjà 
-            if ( $login == $user[1] ) { 
+            if ( $this->login == $user[1] ) { 
 
                 echo "le login est déja pris</br>";
-                
                 $loginOk = false;
                 break;
+
             } else {
                 $loginOk = true;
             }
-
         }
-
-            
 
         if ( $loginOk ) { 
-            $sql = "INSERT INTO utilisateurs(login, password, email, firstname, lastname) VALUES ('$login','$password','$email','$firstname','$lastname')";
+            $sql = "INSERT INTO utilisateurs(login, password, email, firstname, lastname) VALUES ('$this->login','$password','$this->email','$this->firstname','$this->lastname')";
             $this->database->query($sql);
         }
-        
-        // nous retourne un tabbleau avec les info de l'utilisateur qui vient de s'inscrire.
-        /*$sqlselect = "SELECT `login`, `password`, `email`, `firstname`, `lastname` FROM utilisateurs WHERE `login` = '$login'";
-        $request = $this->database->query($sqlselect);
-        return $request->fetch_assoc();*/
-
-        
+                
     }
+
 
     public function connect($login, $password) {
 
         $this->login = $login;
         $password;
         $logged = false;
-        foreach ($this->data as $user) { //je lis le contenu de la table $con de la BDD
-    
-            if ($login === $user[1] &&
-            $password === $user[2]) {
-                //echo "vous etes connecter</br>"; 
-                
-                $_SESSION['login'] = $login;
 
+        foreach ($this->data as $user) { 
+    
+            if ($this->login === $user[1] && $password === $user[2]) {
+                   
+                $_SESSION['login'] = $login;
                 $logged = true;
                 break;
             } else {
-                //echo "erreur dans le mdp ou login</br>";
                 $logged = false;
             }
         }
 
-        if($logged) {
+        if( $logged ) {
             echo "vous etes connecté";
         } else {
             echo "erreur dans le mdp ou login</br>";
@@ -101,6 +91,7 @@ class User
     }
 
     public function delete() {
+
         $this->login = $_SESSION['login'];
         $sql = "DELETE FROM `utilisateurs` WHERE `login` = '$this->login'";
         $this->database->query($sql);
@@ -112,13 +103,13 @@ class User
 
         $this->login =      $login;
         $this->email =      $email;
-        $this->password =   $password;
+        $password;
         $this->firstname =  $firstname;
         $this->lastname =   $lastname;
         $logged_user = $_SESSION['login'];
 
-        $sql_update = "UPDATE `utilisateurs` SET `login` = '$login' , `password` = '$password' , `email` = '$email' , 
-        `firstname` = '$firstname' , `lastname` = '$lastname' WHERE `utilisateurs`.`login` = '$logged_user'";
+        $sql_update = "UPDATE `utilisateurs` SET `login` = '$this->login' , `password` = '$password' , `email` = $this->$email' , 
+        `firstname` = '$this->firstname' , `lastname` = '$this->lastname' WHERE `utilisateurs`.`login` = '$logged_user'";
         $this->database->query($sql_update);
     }
 
@@ -132,24 +123,22 @@ class User
     }
 
     public function getAllInfos() {
+
         $this->login = $_SESSION['login'];
         $sql = "SELECT * FROM `utilisateurs` WHERE `login` = '$this->login'";
         $request = $this->database->query($sql);
         $this->data = $request->fetch_ASSOC();
-        var_dump($this->data);
-        return $this->data;
-        
+        return $this->data;       
     }
 
     public function getLogin() {
+
         $this->login = $_SESSION['login'];
         $sql = "SELECT `login` FROM `utilisateurs` WHERE `login` = '$this->login'";
         $request = $this->database->query($sql);
         $this->data = $request->fetch_ASSOC();
         $this->login = $this->data['login'];
-        return $this->login;
-        
-    
+        return $this->login;   
     }
 
     public function getEmail() {
@@ -190,7 +179,7 @@ $utilisateur = new User;
 //$utilisateur->disconnect();
 //$utilisateur->delete();
 //$utilisateur->update('CRF','umbrella','chris.redfield@RE.com','chris','redfield');
-//$utilisateur->getAllInfos()['password'];
+//$utilisateur->getAllInfos();
 //$utilisateur->getLogin();
 //$utilisateur->getEmail();
 //$utilisateur->getFirstname();
